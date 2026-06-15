@@ -662,3 +662,9 @@ th {
     grid-template-columns: 1fr;
   }
 }
+.export-select {
+  width: auto;
+  min-width: 170px;
+  border-radius: 999px;
+  background: #1b2230;
+}
