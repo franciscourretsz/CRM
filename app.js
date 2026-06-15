@@ -247,7 +247,7 @@ const I18N = {
 
   fr: {
     page_dashboard: 'Tableau de bord',
-    page_funnel: 'Entonnoir',
+    page_funnel: 'Tunnel',
     page_kanban: 'Pipeline Kanban',
     page_leads: 'Leads actifs',
     page_followups: 'Suivis suggérés',
@@ -258,7 +258,7 @@ const I18N = {
 
     brand_subtitle: 'Prospection B2B',
     nav_dashboard: 'Tableau de bord',
-    nav_funnel: 'Entonnoir',
+    nav_funnel: 'Tunnel',
     nav_kanban: 'Pipeline Kanban',
     nav_active_leads: 'Leads actifs',
     nav_followups: 'Suivis',
@@ -1785,7 +1785,7 @@ function renderMetricTable(containerId, rows) {
 
       ${rows.map(row => `
         <div class="metric-row">
-          <div><strong>${escapeHtml(row.label)}</strong></div>
+          <div><strong>${translateCountry(row.label)}</strong></div>
           <div>${row.emails}</div>
           <div>${row.responses} · ${percent(row.responses, row.emails)}</div>
           <div>${row.meetings} · ${percent(row.meetings, row.responses)}</div>
@@ -1796,7 +1796,33 @@ function renderMetricTable(containerId, rows) {
     </div>
   `;
 }
+function translateCountry(country){
 
+ const map = {
+
+  es:{
+   Francia:'Francia',
+   Bélgica:'Bélgica',
+   Suiza:'Suiza'
+  },
+
+  fr:{
+   Francia:'France',
+   Bélgica:'Belgique',
+   Suiza:'Suisse'
+  },
+
+  en:{
+   Francia:'France',
+   Bélgica:'Belgium',
+   Suiza:'Switzerland'
+  }
+
+ };
+
+ return map[currentLanguage]?.[country] || country;
+
+}
 function renderMetrics() {
   renderMetricTable('countryMetrics', groupMetrics(filteredLeads, 'country', COUNTRIES));
   renderMetricTable('channelMetrics', groupMetrics(filteredLeads, 'contact_channel', CHANNELS));
