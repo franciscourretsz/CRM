@@ -371,9 +371,9 @@ const I18N = {
     goal_proposals: 'Propositions',
     goal_clients: 'Clients',
 
-    general_funnel: 'Entonnoir général',
+    general_funnel: 'Tunnel général',
     commercial_alerts: 'Alertes commerciales',
-    commercial_funnel: 'Entonnoir commercial',
+    commercial_funnel: 'Tunnel commercial',
     kanban_title: 'Pipeline Kanban',
     active_leads_title: 'Leads actifs',
     followups_title: 'Suivis suggérés',
