@@ -8,85 +8,243 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 </head>
+
 <body>
-  <header class="topbar">
-    <div>
-      <p class="eyebrow">CRM de prospección</p>
-      <h1>CRM</h1>
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">CRM</div>
+      <p>Prospección B2B</p>
     </div>
-    <div class="top-actions">
-      <button id="refreshBtn" class="btn ghost">Actualizar</button>
-      <button id="exportBtn" class="btn secondary">Exportar CSV filtrado</button>
-      <button id="openImportBtn" class="btn secondary">Importar CSV</button>
-      <button id="openLeadBtn" class="btn primary">Nuevo lead</button>
-    </div>
-  </header>
 
-  <main class="container">
-    <section class="stats-grid">
-      <article class="stat"><span>Total leads</span><strong id="statTotal">0</strong></article>
-      <article class="stat"><span>Con respuesta</span><strong id="statResponses">0</strong></article>
-      <article class="stat"><span>Reuniones</span><strong id="statMeetings">0</strong></article>
-      <article class="stat urgent"><span>A relanzar hoy</span><strong id="statDue">0</strong></article>
-      <article class="stat"><span>Tasa respuesta</span><strong id="statResponseRate">0%</strong></article>
-      <article class="stat"><span>Tasa reunión</span><strong id="statMeetingRate">0%</strong></article>
+    <nav>
+      <button class="nav active" data-section="dashboard">Dashboard</button>
+      <button class="nav" data-section="funnel">Embudo</button>
+      <button class="nav" data-section="leads">Leads activos</button>
+      <button class="nav" data-section="followups">Seguimientos</button>
+      <button class="nav" data-section="relaunch">Relanzamientos</button>
+      <button class="nav" data-section="clients">Clientes</button>
+      <button class="nav" data-section="history">Histórico</button>
+      <button class="nav" data-section="metrics">Métricas</button>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Francia · Bélgica · Suiza</p>
+        <h1 id="pageTitle">Dashboard</h1>
+      </div>
+
+      <div class="top-actions">
+        <button id="refreshBtn" class="btn ghost">Actualizar</button>
+        <button id="exportBtn" class="btn secondary">Exportar CSV</button>
+        <button id="openImportBtn" class="btn secondary">Importar CSV</button>
+        <button id="openClientBtn" class="btn secondary">Nuevo cliente</button>
+        <button id="openLeadBtn" class="btn primary">Nuevo lead</button>
+      </div>
+    </header>
+
+    <section class="filters panel">
+      <div class="field wide">
+        <label>Buscar</label>
+        <input id="searchInput" type="search" placeholder="Nombre, país, ubicación, notas, estado..." />
+      </div>
+
+      <div class="field">
+        <label>País</label>
+        <select id="countryFilter"></select>
+      </div>
+
+      <div class="field">
+        <label>Ubicación</label>
+        <input id="locationFilter" placeholder="Ej: Paris, Bruxelles..." />
+      </div>
+
+      <div class="field">
+        <label>Desde</label>
+        <input id="dateFromFilter" type="date" />
+      </div>
+
+      <div class="field">
+        <label>Hasta</label>
+        <input id="dateToFilter" type="date" />
+      </div>
+
+      <div class="field">
+        <label>Campo fecha</label>
+        <select id="dateFieldFilter">
+          <option value="all">Todas</option>
+          <option value="contact_date">Contacto</option>
+          <option value="last_activity">Última actividad</option>
+          <option value="followup_date">Relanzamiento</option>
+          <option value="response_date">Respuesta</option>
+          <option value="meeting_date">Reunión</option>
+          <option value="proposal_date">Propuesta</option>
+          <option value="won_date">Ganado</option>
+          <option value="lost_date">Perdido</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Estado</label>
+        <select id="statusFilter"></select>
+      </div>
+
+      <div class="field">
+        <label>Vía</label>
+        <select id="channelFilter"></select>
+      </div>
+
+      <div class="field">
+        <label>Interés</label>
+        <select id="interestFilter"></select>
+      </div>
+
+      <div class="field">
+        <label>Vista</label>
+        <select id="viewMode">
+          <option value="cards">Tarjetas</option>
+          <option value="table">Tabla</option>
+        </select>
+      </div>
     </section>
 
-    <section class="panel filters">
-      <div class="field wide"><label>Buscar</label><input id="searchInput" type="search" placeholder="Nombre, ubicación, notas, estado..." /></div>
-      <div class="field"><label>País</label><select id="countryFilter"></select></div>
-      <div class="field"><label>Estado</label><select id="statusFilter"></select></div>
-      <div class="field"><label>Vía</label><select id="channelFilter"></select></div>
-      <div class="field"><label>Respuesta</label><select id="responseFilter"><option value="all">Todas</option><option value="true">Sí</option><option value="false">No</option></select></div>
-      <div class="field"><label>Reunión</label><select id="meetingFilter"><option value="all">Todas</option><option value="true">Sí</option><option value="false">No</option></select></div>
-      <div class="field"><label>Relanzamiento</label><select id="followupFilter"><option value="all">Todos</option><option value="due">A relanzar hoy/vencidos</option><option value="pending">Pendientes futuros</option><option value="done">Ya relanzados</option></select></div>
-      <div class="field"><label>Vista</label><select id="viewMode"><option value="cards">Tarjetas</option><option value="table">Tabla</option></select></div>
+    <section id="dashboard" class="section active">
+      <div class="stats-grid">
+        <article class="stat"><span>Emails enviados</span><strong id="kpiEmails">0</strong></article>
+        <article class="stat"><span>Respuestas</span><strong id="kpiResponses">0</strong></article>
+        <article class="stat"><span>Reuniones</span><strong id="kpiMeetings">0</strong></article>
+        <article class="stat"><span>Propuestas</span><strong id="kpiProposals">0</strong></article>
+        <article class="stat gold"><span>Clientes</span><strong id="kpiClients">0</strong></article>
+        <article class="stat gold"><span>Facturación</span><strong id="kpiRevenue">0 €</strong></article>
+      </div>
+
+      <div class="grid-2">
+        <div class="panel">
+          <div class="section-title"><h2>Embudo general</h2></div>
+          <div id="miniFunnel" class="funnel"></div>
+        </div>
+
+        <div class="panel">
+          <div class="section-title"><h2>Alertas comerciales</h2></div>
+          <div id="alertsBox" class="alert-list"></div>
+        </div>
+      </div>
     </section>
 
-    <section class="panel due-panel">
-      <div class="section-title"><h2>Relanzamientos prioritarios</h2><span id="dueCounter">0 pendientes</span></div>
-      <div id="dueList" class="due-list"></div>
+    <section id="funnel" class="section">
+      <div class="panel">
+        <div class="section-title"><h2>Embudo comercial</h2><span id="funnelSummary"></span></div>
+        <div id="fullFunnel" class="funnel large"></div>
+      </div>
     </section>
 
-    <section class="section-title results-title"><h2>Leads</h2><span id="resultCount">0 resultados</span></section>
+    <section id="leads" class="section">
+      <div class="section-title"><h2>Leads activos</h2><span id="activeLeadCount">0 resultados</span></div>
+      <div id="cardsView" class="cards-grid"></div>
+      <div id="tableView" class="panel table-wrap hidden">
+        <table>
+          <thead>
+            <tr>
+              <th>Fecha</th><th>Nombre</th><th>País</th><th>Ubicación</th><th>Vía</th><th>Emails</th><th>Respuesta</th><th>Interés</th><th>Reunión</th><th>Estado</th><th>Valor</th><th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+    </section>
 
-    <section id="cardsView" class="cards-grid"></section>
+    <section id="followups" class="section">
+      <div class="section-title"><h2>Seguimientos sugeridos</h2><span id="followupCount">0 pendientes</span></div>
+      <div id="followupList" class="cards-grid"></div>
+    </section>
 
-    <section id="tableView" class="panel table-wrap hidden">
-      <table>
-        <thead>
-          <tr>
-            <th>Fecha</th><th>Nombre</th><th>País</th><th>Ubicación</th><th>Vía</th><th>Respuesta</th><th>Relanzamiento</th><th>Reunión</th><th>Estado</th><th>Prioridad</th><th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody id="tableBody"></tbody>
-      </table>
+    <section id="relaunch" class="section">
+      <div class="section-title"><h2>Relanzamientos prioritarios</h2><span id="relaunchCount">0 pendientes</span></div>
+      <div id="relaunchList" class="cards-grid"></div>
+    </section>
+
+    <section id="clients" class="section">
+      <div class="section-title"><h2>Clientes activos</h2><span id="clientCount">0 clientes</span></div>
+      <div id="clientsGrid" class="cards-grid"></div>
+    </section>
+
+    <section id="history" class="section">
+      <div class="section-title"><h2>Archivo histórico</h2><span id="historyCount">0 archivados</span></div>
+      <div id="historyGrid" class="cards-grid"></div>
+    </section>
+
+    <section id="metrics" class="section">
+      <div class="grid-2">
+        <div class="panel">
+          <div class="section-title"><h2>Métricas por país</h2></div>
+          <div id="countryMetrics"></div>
+        </div>
+
+        <div class="panel">
+          <div class="section-title"><h2>Métricas por canal</h2></div>
+          <div id="channelMetrics"></div>
+        </div>
+      </div>
     </section>
   </main>
 
   <dialog id="leadDialog" class="modal">
     <form id="leadForm" method="dialog">
-      <div class="modal-head"><h2 id="modalTitle">Nuevo lead</h2><button type="button" class="icon-btn" id="closeLeadBtn">×</button></div>
+      <div class="modal-head">
+        <h2 id="modalTitle">Nuevo lead</h2>
+        <button type="button" class="icon-btn" id="closeLeadBtn">×</button>
+      </div>
+
       <input id="leadId" type="hidden" />
+
       <div class="form-grid">
-        <div class="field"><label>Fecha de contacto</label><input id="contactDate" type="date" required /></div>
-        <div class="field"><label>Nombre</label><input id="name" type="text" required placeholder="Nombre del contacto o negocio" /></div>
+        <div class="field"><label>Fecha contacto</label><input id="contactDate" type="date" required /></div>
+        <div class="field"><label>Última actividad</label><input id="lastActivity" type="date" /></div>
+        <div class="field"><label>Nombre</label><input id="name" required /></div>
+        <div class="field"><label>Tipo</label><select id="leadType"><option>Lead</option><option>Prospecto</option><option>Cliente</option></select></div>
         <div class="field"><label>País</label><select id="country" required></select></div>
-        <div class="field"><label>Ubicación</label><input id="location" type="text" placeholder="Ciudad" /></div>
-        <div class="field"><label>Vía de contacto</label><select id="contactChannel" required></select></div>
+        <div class="field"><label>Ubicación</label><input id="location" /></div>
+        <div class="field"><label>Tamaño empresa</label><select id="companySize"></select></div>
+        <div class="field"><label>Vía contacto</label><select id="contactChannel" required></select></div>
+        <div class="field"><label>Emails enviados</label><input id="emailsSent" type="number" min="0" value="1" /></div>
         <div class="field"><label>Estado</label><select id="status"></select></div>
         <div class="field"><label>Prioridad</label><select id="priority"><option>Baja</option><option selected>Media</option><option>Alta</option></select></div>
-        <div class="field"><label>¿Hubo respuesta?</label><select id="response"><option value="false">No</option><option value="true">Sí</option></select></div>
-        <div class="field"><label>¿Hubo relanzamiento?</label><select id="followupDone"><option value="false">No</option><option value="true">Sí</option></select></div>
-        <div class="field"><label>Fecha de relanzamiento</label><input id="followupDate" type="date" /></div>
-        <div class="field"><label>¿Llegó a reunión?</label><select id="meetingDone"><option value="false">No</option><option value="true">Sí</option></select></div>
-        <div class="field"><label>Estado de reunión</label><select id="meetingStatus"></select></div>
-        <div class="field wide"><label>Próxima acción</label><input id="nextAction" type="text" placeholder="Ej: relanzar, mandar caso, agendar" /></div>
+        <div class="field"><label>Interés</label><select id="interestLevel"></select></div>
+
+        <div class="field"><label>Respuesta</label><select id="response"><option value="false">No</option><option value="true">Sí</option></select></div>
+        <div class="field"><label>Fecha respuesta</label><input id="responseDate" type="date" /></div>
+        <div class="field"><label>Fecha relanzamiento</label><input id="followupDate" type="date" /></div>
+
+        <div class="field"><label>Relanzamiento hecho</label><select id="followupDone"><option value="false">No</option><option value="true">Sí</option></select></div>
+        <div class="field"><label>Reunión</label><select id="meetingDone"><option value="false">No</option><option value="true">Sí</option></select></div>
+        <div class="field"><label>Fecha reunión</label><input id="meetingDate" type="date" /></div>
+
+        <div class="field"><label>Estado reunión</label><select id="meetingStatus"></select></div>
+        <div class="field"><label>Propuesta enviada</label><select id="proposalSent"><option value="false">No</option><option value="true">Sí</option></select></div>
+        <div class="field"><label>Fecha propuesta</label><input id="proposalDate" type="date" /></div>
+
+        <div class="field"><label>Monto propuesta</label><input id="proposalAmount" type="number" min="0" value="1000" /></div>
+        <div class="field"><label>Estado propuesta</label><select id="proposalStatus"></select></div>
+        <div class="field"><label>Valor potencial</label><input id="estimatedValue" type="number" min="0" value="1000" /></div>
+
+        <div class="field"><label>Valor cerrado</label><input id="closedValue" type="number" min="0" value="0" /></div>
+        <div class="field"><label>Fecha ganado</label><input id="wonDate" type="date" /></div>
+        <div class="field"><label>Fecha perdido</label><input id="lostDate" type="date" /></div>
+
+        <div class="field"><label>Motivo rechazo</label><select id="rejectionReason"></select></div>
+        <div class="field"><label>Archivado</label><select id="archived"><option value="false">No</option><option value="true">Sí</option></select></div>
+        <div class="field"><label>Lead Score</label><input id="leadScore" type="number" min="0" max="100" value="0" /></div>
+
+        <div class="field wide"><label>Próxima acción</label><input id="nextAction" /></div>
         <div class="field wide"><label>Notas</label><textarea id="notes" rows="4"></textarea></div>
-        <div class="field wide"><label>Historial de contacto</label><textarea id="historyText" rows="4"></textarea></div>
+        <div class="field wide"><label>Historial</label><textarea id="historyText" rows="4"></textarea></div>
       </div>
+
       <div class="modal-actions">
         <button type="button" id="deleteLeadBtn" class="btn danger hidden">Eliminar</button>
+        <button type="button" id="archiveLeadBtn" class="btn secondary">Archivar/Desarchivar</button>
+        <button type="button" id="convertClientBtn" class="btn gold-btn hidden">Convertir a cliente</button>
         <div></div>
         <button type="button" id="cancelLeadBtn" class="btn ghost">Cancelar</button>
         <button type="submit" class="btn primary">Guardar</button>
@@ -94,17 +252,54 @@
     </form>
   </dialog>
 
+  <dialog id="clientDialog" class="modal small">
+    <form id="clientForm" method="dialog">
+      <div class="modal-head">
+        <h2 id="clientModalTitle">Nuevo cliente</h2>
+        <button type="button" class="icon-btn" id="closeClientBtn">×</button>
+      </div>
+
+      <input id="clientId" type="hidden" />
+      <input id="clientLeadId" type="hidden" />
+
+      <div class="form-grid two">
+        <div class="field"><label>Nombre cliente</label><input id="clientName" required /></div>
+        <div class="field"><label>País</label><select id="clientCountry"></select></div>
+        <div class="field"><label>Servicios</label><input id="clientServices" placeholder="Meta Ads, Estrategia, Sitio web" /></div>
+        <div class="field"><label>Fee mensual €</label><input id="monthlyFee" type="number" min="0" value="0" /></div>
+        <div class="field"><label>Setup €</label><input id="setupFee" type="number" min="0" value="0" /></div>
+        <div class="field"><label>Valor total €</label><input id="totalValue" type="number" min="0" value="0" /></div>
+        <div class="field"><label>Inicio</label><input id="startDate" type="date" /></div>
+        <div class="field"><label>Fin</label><input id="endDate" type="date" /></div>
+        <div class="field"><label>Estado</label><select id="clientStatus"><option>Activo</option><option>Pausado</option><option>Finalizado</option></select></div>
+        <div class="field wide"><label>Notas</label><textarea id="clientNotes" rows="4"></textarea></div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" id="deleteClientBtn" class="btn danger hidden">Eliminar</button>
+        <div></div>
+        <button type="button" id="cancelClientBtn" class="btn ghost">Cancelar</button>
+        <button type="submit" class="btn primary">Guardar cliente</button>
+      </div>
+    </form>
+  </dialog>
+
   <dialog id="importDialog" class="modal small">
-    <div class="modal-head"><h2>Importar CSV</h2><button type="button" class="icon-btn" id="closeImportBtn">×</button></div>
-    <p>Exportá desde Excel como CSV e importalo acá.</p>
+    <div class="modal-head">
+      <h2>Importar CSV</h2>
+      <button type="button" class="icon-btn" id="closeImportBtn">×</button>
+    </div>
+    <p>Importá un CSV exportado desde Excel. El sistema intentará reconocer las columnas principales.</p>
     <input id="csvFile" type="file" accept=".csv,text/csv" />
     <div class="modal-actions">
+      <div></div>
       <button type="button" id="cancelImportBtn" class="btn ghost">Cancelar</button>
       <button type="button" id="importBtn" class="btn primary">Importar</button>
     </div>
   </dialog>
 
   <div id="toast" class="toast hidden"></div>
+
   <script src="app.js"></script>
 </body>
 </html>
