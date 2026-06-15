@@ -1138,148 +1138,73 @@ async function deleteClient() {
 }
 
 function exportCSV() {
-  const rows = filteredLeads.map(lead => ({
-    fecha_contacto: lead.contact_date,
-    nombre: lead.name,
-    pais: lead.country,
-    ubicacion: lead.location,
-    canal: lead.contact_channel,
-    emails: lead.emails_sent,
-    respuesta: lead.response ? 'Sí' : 'No',
-    interes: lead.interest_level,
-    reunion: lead.meeting_done ? 'Sí' : 'No',
-    estado: lead.status,
-    valor: lead.estimated_value,
-    notas: lead.notes
-  }));
+  const type = $('exportType').value;
+
+  let rows = [];
+  let filename = `crm_${type}_${today()}.csv`;
+
+  if (type === 'clients') {
+    rows = clients.map(client => ({
+      nombre: client.client_name,
+      pais: client.country,
+      servicios: (client.services || []).join(', '),
+      fee_mensual: client.monthly_fee,
+      setup: client.setup_fee,
+      valor_total: client.total_value,
+      inicio: client.start_date,
+      fin: client.end_date,
+      estado: client.status,
+      notas: client.notes
+    }));
+  } else {
+    let source = filteredLeads;
+
+    if (type === 'active') source = leads.filter(l => !l.archived && l.status !== 'Perdido');
+    if (type === 'responded') source = leads.filter(l => l.response);
+    if (type === 'no_response') source = leads.filter(l => !l.response && !l.archived);
+    if (type === 'meetings') source = leads.filter(l => l.meeting_done || l.meeting_status === 'Agendada' || l.meeting_status === 'Realizada');
+    if (type === 'won') source = leads.filter(l => l.status === 'Ganado');
+    if (type === 'lost') source = leads.filter(l => l.status === 'Perdido');
+    if (type === 'archived') source = leads.filter(l => l.archived);
+
+    rows = source.map(lead => ({
+      fecha_contacto: lead.contact_date,
+      ultima_actividad: lead.last_activity,
+      nombre: lead.name,
+      tipo: lead.lead_type,
+      pais: lead.country,
+      ubicacion: lead.location,
+      canal: lead.contact_channel,
+      emails_enviados: lead.emails_sent,
+      respuesta: lead.response ? 'Sí' : 'No',
+      fecha_respuesta: lead.response_date,
+      interes: lead.interest_level,
+      reunion: lead.meeting_done ? 'Sí' : 'No',
+      fecha_reunion: lead.meeting_date,
+      estado_reunion: lead.meeting_status,
+      propuesta: lead.proposal_sent ? 'Sí' : 'No',
+      monto_propuesta: lead.proposal_amount,
+      estado_propuesta: lead.proposal_status,
+      estado: lead.status,
+      valor_potencial: lead.estimated_value,
+      valor_cerrado: lead.closed_value,
+      archivado: lead.archived ? 'Sí' : 'No',
+      motivo_rechazo: lead.rejection_reason,
+      notas: lead.notes,
+      historial: lead.history
+    }));
+  }
 
   const csv = Papa.unparse(rows);
-
-  const blob = new Blob([csv], {
-    type: 'text/csv;charset=utf-8;'
-  });
-
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
 
   const a = document.createElement('a');
   a.href = url;
-  a.download = `crm_${today()}.csv`;
+  a.download = filename;
   a.click();
 
   URL.revokeObjectURL(url);
-}
-
-async function importCSV() {
-  const file = $('csvFile').files[0];
-
-  if (!file) {
-    toast('Seleccioná un CSV');
-    return;
-  }
-
-  Papa.parse(file, {
-    header: true,
-    skipEmptyLines: true,
-
-    complete: async results => {
-      try {
-        const rows = results.data.map(row => ({
-          contact_date:
-            parseDate(
-              row.contact_date ||
-              row.fecha_contacto ||
-              row.fecha
-            ) || today(),
-
-          last_activity: today(),
-
-          name:
-            row.name ||
-            row.nombre ||
-            '',
-
-          country:
-            row.country ||
-            row.pais ||
-            'Francia',
-
-          location:
-            row.location ||
-            row.ubicacion ||
-            '',
-
-          contact_channel:
-            row.contact_channel ||
-            row.canal ||
-            'Email',
-
-          status:
-            row.status ||
-            row.estado ||
-            'Nuevo',
-
-          priority:
-            row.priority ||
-            'Media',
-
-          response:
-            normalizeBool(
-              row.response ||
-              row.respuesta
-            ),
-
-          interest_level:
-            row.interest_level ||
-            row.interes ||
-            'Sin interés',
-
-          emails_sent:
-            Number(
-              row.emails_sent ||
-              row.emails ||
-              1
-            ),
-
-          estimated_value:
-            Number(
-              row.estimated_value ||
-              row.valor ||
-              1000
-            ),
-
-          notes:
-            row.notes ||
-            row.notas ||
-            ''
-        }))
-        .filter(row => row.name);
-
-        if (!rows.length) {
-          toast('No se encontraron filas válidas');
-          return;
-        }
-
-        const { error } = await supabaseClient
-          .from('leads')
-          .insert(rows);
-
-        if (error) {
-          toast(error.message);
-          return;
-        }
-
-        $('importDialog').close();
-
-        toast(`${rows.length} leads importados`);
-
-        await loadAll();
-
-      } catch (err) {
-        toast('Error importando CSV');
-        console.error(err);
-      }
-    }
-  });
 }
 
 function setupFilters() {
