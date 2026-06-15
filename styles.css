@@ -40,9 +40,7 @@ button { cursor: pointer; }
   z-index: 20;
 }
 
-.brand {
-  margin-bottom: 28px;
-}
+.brand { margin-bottom: 28px; }
 
 .logo {
   width: 64px;
@@ -161,6 +159,13 @@ h1 {
   color: var(--primary2);
 }
 
+.export-select {
+  width: auto;
+  min-width: 120px;
+  border-radius: 999px;
+  background: #1b2230;
+}
+
 .filters {
   margin: 24px 34px 22px;
   display: grid;
@@ -182,15 +187,17 @@ h1 {
   padding: 0 34px 70px;
 }
 
-.section.active {
-  display: block;
-}
+.section.active { display: block; }
 
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 14px;
   margin-bottom: 18px;
+}
+
+.finance-grid {
+  grid-template-columns: repeat(4, 1fr);
 }
 
 .stat {
@@ -214,6 +221,7 @@ h1 {
 }
 
 .stat.gold strong { color: var(--primary2); }
+.purple-stat strong { color: var(--purple); }
 
 .grid-2 {
   display: grid;
@@ -388,9 +396,7 @@ input:focus, select:focus, textarea:focus {
   flex-wrap: wrap;
 }
 
-.table-wrap {
-  overflow: auto;
-}
+.table-wrap { overflow: auto; }
 
 table {
   width: 100%;
@@ -501,6 +507,129 @@ th {
   letter-spacing: .08em;
 }
 
+/* Kanban */
+.kanban-board {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(260px, 1fr));
+  gap: 14px;
+  overflow-x: auto;
+  padding-bottom: 14px;
+}
+
+.kanban-column {
+  min-height: 520px;
+  background: rgba(16,20,28,.88);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 14px;
+  min-width: 260px;
+}
+
+.kanban-column.drag-over {
+  border-color: var(--primary);
+  background: rgba(215,181,109,.08);
+}
+
+.kanban-column-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.kanban-column-head h3 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.kanban-column-head span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.kanban-card {
+  background: linear-gradient(180deg,#121823,#0d1119);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 12px;
+  margin-bottom: 10px;
+  cursor: grab;
+}
+
+.kanban-card:active {
+  cursor: grabbing;
+}
+
+.kanban-card h4 {
+  margin: 0 0 8px;
+  font-size: 14px;
+}
+
+.kanban-card p {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.kanban-card-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: center;
+}
+
+/* Goals */
+.goals-panel {
+  margin-bottom: 18px;
+}
+
+.goals-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr) auto;
+  gap: 12px;
+  align-items: end;
+}
+
+.goals-progress {
+  display: grid;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.goal-progress-row {
+  display: grid;
+  grid-template-columns: 160px 1fr 120px;
+  gap: 12px;
+  align-items: center;
+}
+
+.goal-progress-label {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.goal-progress-bar-wrap {
+  height: 28px;
+  background: #080b11;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.goal-progress-bar {
+  height: 100%;
+  min-width: 4%;
+  background: linear-gradient(135deg, var(--primary), var(--primary2));
+  border-radius: 999px;
+}
+
+.goal-progress-value {
+  color: var(--muted);
+  font-size: 13px;
+  text-align: right;
+}
+
 .hidden { display: none !important; }
 
 .modal {
@@ -535,9 +664,7 @@ th {
   margin-bottom: 18px;
 }
 
-.modal-head h2 {
-  margin: 0;
-}
+.modal-head h2 { margin: 0; }
 
 .icon-btn {
   background: transparent;
@@ -565,9 +692,7 @@ th {
   flex-wrap: wrap;
 }
 
-.modal-actions > div {
-  flex: 1;
-}
+.modal-actions > div { flex: 1; }
 
 .toast {
   position: fixed;
@@ -587,7 +712,8 @@ th {
     grid-template-columns: repeat(3, 1fr);
   }
 
-  .stats-grid {
+  .stats-grid,
+  .finance-grid {
     grid-template-columns: repeat(3, 1fr);
   }
 
@@ -597,6 +723,10 @@ th {
 
   .grid-2 {
     grid-template-columns: 1fr;
+  }
+
+  .goals-grid {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
@@ -639,9 +769,11 @@ th {
   }
 
   .stats-grid,
+  .finance-grid,
   .cards-grid,
   .form-grid,
-  .form-grid.two {
+  .form-grid.two,
+  .goals-grid {
     grid-template-columns: 1fr;
   }
 
@@ -650,21 +782,21 @@ th {
     width: 100%;
   }
 
-  .funnel-step {
+  .export-select {
+    width: 100%;
+  }
+
+  .funnel-step,
+  .goal-progress-row {
     grid-template-columns: 1fr;
   }
 
-  .funnel-rate {
+  .funnel-rate,
+  .goal-progress-value {
     text-align: left;
   }
 
   .metric-row {
     grid-template-columns: 1fr;
   }
-}
-.export-select {
-  width: auto;
-  min-width: 170px;
-  border-radius: 999px;
-  background: #1b2230;
 }
