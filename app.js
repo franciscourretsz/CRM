@@ -700,16 +700,64 @@ function badge(text, cls = '') {
 }
 
 function responseBadge(lead) {
-  return lead.response ? badge('Respuesta: Sí', 'ok') : badge('Respuesta: No');
-}
 
+  const labels = {
+    es: {
+      yes: 'Respuesta: Sí',
+      no: 'Respuesta: No'
+    },
+    fr: {
+      yes: 'Réponse : Oui',
+      no: 'Réponse : Non'
+    },
+    en: {
+      yes: 'Response: Yes',
+      no: 'Response: No'
+    }
+  };
+
+  return lead.response
+    ? badge(labels[currentLanguage].yes, 'ok')
+    : badge(labels[currentLanguage].no);
+}
 function interestBadge(lead) {
+
   const level = lead.interest_level || 'Sin interés';
 
-  if (level === 'Interés alto') return badge(level, 'ok');
-  if (level === 'Interés medio') return badge(level, 'orange');
-  if (level === 'Interés bajo') return badge(level, 'warn');
-  return badge(level, 'danger');
+  const map = {
+    es: {
+      'Sin interés': 'Sin interés',
+      'Interés bajo': 'Interés bajo',
+      'Interés medio': 'Interés medio',
+      'Interés alto': 'Interés alto'
+    },
+    fr: {
+      'Sin interés': 'Pas intéressé',
+      'Interés bajo': 'Faible intérêt',
+      'Interés medio': 'Intérêt moyen',
+      'Interés alto': 'Fort intérêt'
+    },
+    en: {
+      'Sin interés': 'No interest',
+      'Interés bajo': 'Low interest',
+      'Interés medio': 'Medium interest',
+      'Interés alto': 'High interest'
+    }
+  };
+
+  const text =
+    map[currentLanguage]?.[level] || level;
+
+  if (level === 'Interés alto')
+    return badge(text, 'ok');
+
+  if (level === 'Interés medio')
+    return badge(text, 'orange');
+
+  if (level === 'Interés bajo')
+    return badge(text, 'warn');
+
+  return badge(text, 'danger');
 }
 
 function meetingBadge(lead) {
@@ -773,10 +821,40 @@ function leadTemperature(lead) {
 function temperatureBadge(lead) {
   const temp = leadTemperature(lead);
 
-  if (temp === 'Cliente') return badge('Cliente', 'gold');
-  if (temp === 'Caliente') return badge('Caliente', 'ok');
-  if (temp === 'Tibio') return badge('Tibio', 'warn');
-  return badge('Frío');
+  const labels = {
+    es: {
+      Cliente: 'Cliente',
+      Caliente: 'Caliente',
+      Tibio: 'Tibio',
+      Frío: 'Frío'
+    },
+    fr: {
+      Cliente: 'Client',
+      Caliente: 'Chaud',
+      Tibio: 'Tiède',
+      Frío: 'Froid'
+    },
+    en: {
+      Cliente: 'Client',
+      Caliente: 'Hot',
+      Tibio: 'Warm',
+      Frío: 'Cold'
+    }
+  };
+
+  const text =
+    labels[currentLanguage]?.[temp] || temp;
+
+  if (temp === 'Cliente')
+    return badge(text, 'gold');
+
+  if (temp === 'Caliente')
+    return badge(text, 'ok');
+
+  if (temp === 'Tibio')
+    return badge(text, 'warn');
+
+  return badge(text);
 }
 
 function getLeadScore(lead) {
@@ -1024,17 +1102,24 @@ function renderDashboard() {
   const data = funnelData(leads);
 
   const pipelinePotential = leads
-    .filter(
-      lead =>
-        !lead.archived &&
-        lead.status !== 'Ganado' &&
-        lead.status !== 'Perdido'
-    )
-    .reduce(
-      (sum, lead) =>
-        sum + Number(lead.estimated_value || 0),
-      0
-    );
+  .filter(
+    lead =>
+      !lead.archived &&
+      (
+        lead.proposal_sent ||
+        lead.status === 'Propuesta enviada'
+      )
+  )
+  .reduce(
+    (sum, lead) =>
+      sum +
+      Number(
+        lead.proposal_amount ||
+        lead.estimated_value ||
+        0
+      ),
+    0
+  );
 
   const proposalValue = leads
     .filter(
@@ -1469,7 +1554,43 @@ function renderRelaunch() {
     source.map(lead => renderLeadCard(lead)).join('') ||
     '<p class="notes">No hay relanzamientos vencidos.</p>';
 }
+function translateStatus(status) {
 
+  const map = {
+    es: {
+      Nuevo: 'Nuevo',
+      Contactado: 'Contactado',
+      Respondió: 'Respondió',
+      Interesado: 'Interesado',
+      'Reunión agendada': 'Reunión agendada',
+      'Propuesta enviada': 'Propuesta enviada',
+      Ganado: 'Ganado',
+      Perdido: 'Perdido'
+    },
+    fr: {
+      Nuevo: 'Nouveau',
+      Contactado: 'Contacté',
+      Respondió: 'A répondu',
+      Interesado: 'Intéressé',
+      'Reunión agendada': 'Réunion planifiée',
+      'Propuesta enviada': 'Proposition envoyée',
+      Ganado: 'Gagné',
+      Perdido: 'Perdu'
+    },
+    en: {
+      Nuevo: 'New',
+      Contactado: 'Contacted',
+      Respondió: 'Responded',
+      Interesado: 'Interested',
+      'Reunión agendada': 'Meeting booked',
+      'Propuesta enviada': 'Proposal sent',
+      Ganado: 'Won',
+      Perdido: 'Lost'
+    }
+  };
+
+  return map[currentLanguage]?.[status] || status;
+}
 function renderKanban() {
   if (!$('kanbanBoard')) return;
 
@@ -1482,7 +1603,7 @@ function renderKanban() {
     return `
       <div class="kanban-column" data-status="${escapeHtml(status)}">
         <div class="kanban-column-head">
-          <h3>${escapeHtml(status)}</h3>
+          <h3>${translateStatus(status)}</h3>
           <span>${items.length}</span>
         </div>
 
