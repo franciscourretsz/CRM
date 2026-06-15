@@ -1232,7 +1232,47 @@ function setupNavigation() {
     });
   });
 }
+async function importCSV() {
+  const file = $('csvFile').files[0];
 
+  if (!file) {
+    toast('Seleccioná un CSV');
+    return;
+  }
+
+  Papa.parse(file, {
+    header: true,
+    skipEmptyLines: true,
+    complete: async results => {
+      const rows = results.data.map(row => ({
+        contact_date: parseDate(row.contact_date || row.fecha_contacto || row.fecha) || today(),
+        last_activity: today(),
+        name: row.name || row.nombre || '',
+        country: row.country || row.pais || 'Francia',
+        location: row.location || row.ubicacion || '',
+        contact_channel: row.contact_channel || row.canal || 'Email',
+        emails_sent: Number(row.emails_sent || row.emails || 1),
+        status: row.status || row.estado || 'Nuevo',
+        priority: row.priority || 'Media',
+        response: normalizeBool(row.response || row.respuesta),
+        interest_level: row.interest_level || row.interes || 'Sin interés',
+        estimated_value: Number(row.estimated_value || row.valor || 1000),
+        notes: row.notes || row.notas || ''
+      })).filter(row => row.name);
+
+      const { error } = await supabaseClient.from('leads').insert(rows);
+
+      if (error) {
+        toast(error.message);
+        return;
+      }
+
+      $('importDialog').close();
+      toast(`${rows.length} leads importados`);
+      await loadAll();
+    }
+  });
+}
 function setupButtons() {
   $('openLeadBtn').onclick = openNewLead;
   $('openClientBtn').onclick = openNewClient;
