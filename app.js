@@ -1243,7 +1243,7 @@ function setupButtons() {
   $('openImportBtn').onclick = () => $('importDialog').showModal();
   $('closeImportBtn').onclick = () => $('importDialog').close();
   $('cancelImportBtn').onclick = () => $('importDialog').close();
-  $('importBtn').onclick = importCSV;
+  $('importBtn').onclick = () => importCSV();
 
   $('closeLeadBtn').onclick = () => $('leadDialog').close();
   $('cancelLeadBtn').onclick = () => $('leadDialog').close();
