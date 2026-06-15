@@ -13,18 +13,19 @@
   <aside class="sidebar">
     <div class="brand">
       <div class="logo">CRM</div>
-      <p>Prospección B2B</p>
+      <p data-i18n="brand_subtitle">Prospección B2B</p>
     </div>
 
     <nav>
-      <button class="nav active" data-section="dashboard">Dashboard</button>
-      <button class="nav" data-section="funnel">Embudo</button>
-      <button class="nav" data-section="leads">Leads activos</button>
-      <button class="nav" data-section="followups">Seguimientos</button>
-      <button class="nav" data-section="relaunch">Relanzamientos</button>
-      <button class="nav" data-section="clients">Clientes</button>
-      <button class="nav" data-section="history">Histórico</button>
-      <button class="nav" data-section="metrics">Métricas</button>
+      <button class="nav active" data-section="dashboard" data-i18n="nav_dashboard">Dashboard</button>
+      <button class="nav" data-section="funnel" data-i18n="nav_funnel">Embudo</button>
+      <button class="nav" data-section="kanban" data-i18n="nav_kanban">Pipeline Kanban</button>
+      <button class="nav" data-section="leads" data-i18n="nav_active_leads">Leads activos</button>
+      <button class="nav" data-section="followups" data-i18n="nav_followups">Seguimientos</button>
+      <button class="nav" data-section="relaunch" data-i18n="nav_relaunch">Relanzamientos</button>
+      <button class="nav" data-section="clients" data-i18n="nav_clients">Clientes</button>
+      <button class="nav" data-section="history" data-i18n="nav_history">Histórico</button>
+      <button class="nav" data-section="metrics" data-i18n="nav_metrics">Métricas</button>
     </nav>
   </aside>
 
@@ -36,97 +37,142 @@
       </div>
 
       <div class="top-actions">
-        <button id="refreshBtn" class="btn ghost">Actualizar</button>
-        <select id="exportType" class="export-select">   <option value="filtered">Exportar filtrados</option>   <option value="active">Leads activos</option>   <option value="responded">Con respuesta</option>   <option value="no_response">Sin respuesta</option>   <option value="meetings">Con reunión</option>   <option value="won">Ganados</option>   <option value="lost">Perdidos</option>   <option value="archived">Histórico</option>   <option value="clients">Clientes</option> </select>  <button id="exportBtn" class="btn secondary">Exportar CSV</button>
-        <button id="openImportBtn" class="btn secondary">Importar CSV</button>
-        <button id="openClientBtn" class="btn secondary">Nuevo cliente</button>
-        <button id="openLeadBtn" class="btn primary">Nuevo lead</button>
+        <select id="languageSelect" class="export-select">
+          <option value="es">ESP</option>
+          <option value="fr">FR</option>
+          <option value="en">EN</option>
+        </select>
+
+        <button id="refreshBtn" class="btn ghost" data-i18n="btn_refresh">Actualizar</button>
+
+        <select id="exportType" class="export-select">
+          <option value="filtered" data-i18n="export_filtered">Exportar filtrados</option>
+          <option value="active" data-i18n="export_active">Leads activos</option>
+          <option value="responded" data-i18n="export_responded">Con respuesta</option>
+          <option value="no_response" data-i18n="export_no_response">Sin respuesta</option>
+          <option value="meetings" data-i18n="export_meetings">Con reunión</option>
+          <option value="won" data-i18n="export_won">Ganados</option>
+          <option value="lost" data-i18n="export_lost">Perdidos</option>
+          <option value="archived" data-i18n="export_archived">Histórico</option>
+          <option value="clients" data-i18n="export_clients">Clientes</option>
+        </select>
+
+        <button id="exportBtn" class="btn secondary" data-i18n="btn_export">Exportar CSV</button>
+        <button id="openImportBtn" class="btn secondary" data-i18n="btn_import">Importar CSV</button>
+        <button id="openClientBtn" class="btn secondary" data-i18n="btn_new_client">Nuevo cliente</button>
+        <button id="openLeadBtn" class="btn primary" data-i18n="btn_new_lead">Nuevo lead</button>
       </div>
     </header>
 
     <section class="filters panel">
       <div class="field wide">
-        <label>Buscar</label>
-        <input id="searchInput" type="search" placeholder="Nombre, país, ubicación, notas, estado..." />
+        <label data-i18n="filter_search">Buscar</label>
+        <input id="searchInput" type="search" placeholder="Nombre, país, ubicación, notas, estado..." data-i18n-placeholder="filter_search_placeholder" />
       </div>
 
       <div class="field">
-        <label>País</label>
+        <label data-i18n="field_country">País</label>
         <select id="countryFilter"></select>
       </div>
 
       <div class="field">
-        <label>Ubicación</label>
-        <input id="locationFilter" placeholder="Ej: Paris, Bruxelles..." />
+        <label data-i18n="field_location">Ubicación</label>
+        <input id="locationFilter" placeholder="Ej: Paris, Bruxelles..." data-i18n-placeholder="field_location_placeholder" />
       </div>
 
       <div class="field">
-        <label>Desde</label>
+        <label data-i18n="filter_from">Desde</label>
         <input id="dateFromFilter" type="date" />
       </div>
 
       <div class="field">
-        <label>Hasta</label>
+        <label data-i18n="filter_to">Hasta</label>
         <input id="dateToFilter" type="date" />
       </div>
 
       <div class="field">
-        <label>Campo fecha</label>
+        <label data-i18n="filter_date_field">Campo fecha</label>
         <select id="dateFieldFilter">
-          <option value="all">Todas</option>
-          <option value="contact_date">Contacto</option>
-          <option value="last_activity">Última actividad</option>
-          <option value="followup_date">Relanzamiento</option>
-          <option value="response_date">Respuesta</option>
-          <option value="meeting_date">Reunión</option>
-          <option value="proposal_date">Propuesta</option>
-          <option value="won_date">Ganado</option>
-          <option value="lost_date">Perdido</option>
+          <option value="all" data-i18n="all_feminine">Todas</option>
+          <option value="contact_date" data-i18n="date_contact">Contacto</option>
+          <option value="last_activity" data-i18n="date_last_activity">Última actividad</option>
+          <option value="followup_date" data-i18n="date_relaunch">Relanzamiento</option>
+          <option value="response_date" data-i18n="date_response">Respuesta</option>
+          <option value="meeting_date" data-i18n="date_meeting">Reunión</option>
+          <option value="proposal_date" data-i18n="date_proposal">Propuesta</option>
+          <option value="won_date" data-i18n="date_won">Ganado</option>
+          <option value="lost_date" data-i18n="date_lost">Perdido</option>
         </select>
       </div>
 
       <div class="field">
-        <label>Estado</label>
+        <label data-i18n="field_status">Estado</label>
         <select id="statusFilter"></select>
       </div>
 
       <div class="field">
-        <label>Vía</label>
+        <label data-i18n="field_channel">Vía</label>
         <select id="channelFilter"></select>
       </div>
 
       <div class="field">
-        <label>Interés</label>
+        <label data-i18n="field_interest">Interés</label>
         <select id="interestFilter"></select>
       </div>
 
       <div class="field">
-        <label>Vista</label>
+        <label data-i18n="field_view">Vista</label>
         <select id="viewMode">
-          <option value="cards">Tarjetas</option>
-          <option value="table">Tabla</option>
+          <option value="cards" data-i18n="view_cards">Tarjetas</option>
+          <option value="table" data-i18n="view_table">Tabla</option>
         </select>
       </div>
     </section>
 
     <section id="dashboard" class="section active">
       <div class="stats-grid">
-        <article class="stat"><span>Emails enviados</span><strong id="kpiEmails">0</strong></article>
-        <article class="stat"><span>Respuestas</span><strong id="kpiResponses">0</strong></article>
-        <article class="stat"><span>Reuniones</span><strong id="kpiMeetings">0</strong></article>
-        <article class="stat"><span>Propuestas</span><strong id="kpiProposals">0</strong></article>
-        <article class="stat gold"><span>Clientes</span><strong id="kpiClients">0</strong></article>
-        <article class="stat gold"><span>Facturación</span><strong id="kpiRevenue">0 €</strong></article>
+        <article class="stat"><span data-i18n="kpi_emails">Emails enviados</span><strong id="kpiEmails">0</strong></article>
+        <article class="stat"><span data-i18n="kpi_responses">Respuestas</span><strong id="kpiResponses">0</strong></article>
+        <article class="stat"><span data-i18n="kpi_meetings">Reuniones</span><strong id="kpiMeetings">0</strong></article>
+        <article class="stat"><span data-i18n="kpi_proposals">Propuestas</span><strong id="kpiProposals">0</strong></article>
+        <article class="stat gold"><span data-i18n="kpi_clients">Clientes</span><strong id="kpiClients">0</strong></article>
+        <article class="stat gold"><span data-i18n="kpi_revenue">Facturación</span><strong id="kpiRevenue">0 €</strong></article>
+      </div>
+
+      <div class="stats-grid finance-grid">
+        <article class="stat gold"><span data-i18n="potential_pipeline">Pipeline potencial</span><strong id="kpiPipeline">0 €</strong></article>
+        <article class="stat purple-stat"><span data-i18n="sent_proposals">Propuestas enviadas</span><strong id="kpiProposalValue">0 €</strong></article>
+        <article class="stat gold"><span data-i18n="closed_revenue">Cerrado / facturado</span><strong id="kpiClosedRevenue">0 €</strong></article>
+        <article class="stat"><span data-i18n="active_clients">Clientes activos</span><strong id="kpiActiveClients">0</strong></article>
+      </div>
+
+      <div class="panel goals-panel">
+        <div class="section-title">
+          <h2 data-i18n="monthly_goals">Objetivos mensuales</h2>
+          <span id="goalsMonth"></span>
+        </div>
+
+        <div class="goals-grid">
+          <div class="field"><label data-i18n="goal_emails">Emails</label><input id="goalEmails" type="number" min="0"></div>
+          <div class="field"><label data-i18n="goal_responses">Respuestas</label><input id="goalResponses" type="number" min="0"></div>
+          <div class="field"><label data-i18n="goal_meetings">Reuniones</label><input id="goalMeetings" type="number" min="0"></div>
+          <div class="field"><label data-i18n="goal_proposals">Propuestas</label><input id="goalProposals" type="number" min="0"></div>
+          <div class="field"><label data-i18n="goal_clients">Clientes</label><input id="goalClients" type="number" min="0"></div>
+          <div class="field"><label>Revenue €</label><input id="goalRevenue" type="number" min="0"></div>
+          <button id="saveGoalsBtn" class="btn primary" data-i18n="save_goals">Guardar objetivos</button>
+        </div>
+
+        <div id="goalsProgress" class="goals-progress"></div>
       </div>
 
       <div class="grid-2">
         <div class="panel">
-          <div class="section-title"><h2>Embudo general</h2></div>
+          <div class="section-title"><h2 data-i18n="general_funnel">Embudo general</h2></div>
           <div id="miniFunnel" class="funnel"></div>
         </div>
 
         <div class="panel">
-          <div class="section-title"><h2>Alertas comerciales</h2></div>
+          <div class="section-title"><h2 data-i18n="commercial_alerts">Alertas comerciales</h2></div>
           <div id="alertsBox" class="alert-list"></div>
         </div>
       </div>
@@ -134,19 +180,39 @@
 
     <section id="funnel" class="section">
       <div class="panel">
-        <div class="section-title"><h2>Embudo comercial</h2><span id="funnelSummary"></span></div>
+        <div class="section-title"><h2 data-i18n="commercial_funnel">Embudo comercial</h2><span id="funnelSummary"></span></div>
         <div id="fullFunnel" class="funnel large"></div>
       </div>
     </section>
 
+    <section id="kanban" class="section">
+      <div class="section-title">
+        <h2 data-i18n="kanban_title">Pipeline Kanban</h2>
+        <span id="kanbanCount">0 leads</span>
+      </div>
+      <div id="kanbanBoard" class="kanban-board"></div>
+    </section>
+
     <section id="leads" class="section">
-      <div class="section-title"><h2>Leads activos</h2><span id="activeLeadCount">0 resultados</span></div>
+      <div class="section-title"><h2 data-i18n="active_leads_title">Leads activos</h2><span id="activeLeadCount">0 resultados</span></div>
       <div id="cardsView" class="cards-grid"></div>
+
       <div id="tableView" class="panel table-wrap hidden">
         <table>
           <thead>
             <tr>
-              <th>Fecha</th><th>Nombre</th><th>País</th><th>Ubicación</th><th>Vía</th><th>Emails</th><th>Respuesta</th><th>Interés</th><th>Reunión</th><th>Estado</th><th>Valor</th><th>Acciones</th>
+              <th data-i18n="th_date">Fecha</th>
+              <th data-i18n="th_name">Nombre</th>
+              <th data-i18n="th_country">País</th>
+              <th data-i18n="th_location">Ubicación</th>
+              <th data-i18n="th_channel">Vía</th>
+              <th data-i18n="th_emails">Emails</th>
+              <th data-i18n="th_response">Respuesta</th>
+              <th data-i18n="th_interest">Interés</th>
+              <th data-i18n="th_meeting">Reunión</th>
+              <th data-i18n="th_status">Estado</th>
+              <th data-i18n="th_value">Valor</th>
+              <th data-i18n="th_actions">Acciones</th>
             </tr>
           </thead>
           <tbody id="tableBody"></tbody>
@@ -155,34 +221,34 @@
     </section>
 
     <section id="followups" class="section">
-      <div class="section-title"><h2>Seguimientos sugeridos</h2><span id="followupCount">0 pendientes</span></div>
+      <div class="section-title"><h2 data-i18n="followups_title">Seguimientos sugeridos</h2><span id="followupCount">0 pendientes</span></div>
       <div id="followupList" class="cards-grid"></div>
     </section>
 
     <section id="relaunch" class="section">
-      <div class="section-title"><h2>Relanzamientos prioritarios</h2><span id="relaunchCount">0 pendientes</span></div>
+      <div class="section-title"><h2 data-i18n="relaunch_title">Relanzamientos prioritarios</h2><span id="relaunchCount">0 pendientes</span></div>
       <div id="relaunchList" class="cards-grid"></div>
     </section>
 
     <section id="clients" class="section">
-      <div class="section-title"><h2>Clientes activos</h2><span id="clientCount">0 clientes</span></div>
+      <div class="section-title"><h2 data-i18n="clients_title">Clientes activos</h2><span id="clientCount">0 clientes</span></div>
       <div id="clientsGrid" class="cards-grid"></div>
     </section>
 
     <section id="history" class="section">
-      <div class="section-title"><h2>Archivo histórico</h2><span id="historyCount">0 archivados</span></div>
+      <div class="section-title"><h2 data-i18n="history_title">Archivo histórico</h2><span id="historyCount">0 archivados</span></div>
       <div id="historyGrid" class="cards-grid"></div>
     </section>
 
     <section id="metrics" class="section">
       <div class="grid-2">
         <div class="panel">
-          <div class="section-title"><h2>Métricas por país</h2></div>
+          <div class="section-title"><h2 data-i18n="metrics_country">Métricas por país</h2></div>
           <div id="countryMetrics"></div>
         </div>
 
         <div class="panel">
-          <div class="section-title"><h2>Métricas por canal</h2></div>
+          <div class="section-title"><h2 data-i18n="metrics_channel">Métricas por canal</h2></div>
           <div id="channelMetrics"></div>
         </div>
       </div>
@@ -199,55 +265,55 @@
       <input id="leadId" type="hidden" />
 
       <div class="form-grid">
-        <div class="field"><label>Fecha contacto</label><input id="contactDate" type="date" required /></div>
-        <div class="field"><label>Última actividad</label><input id="lastActivity" type="date" /></div>
-        <div class="field"><label>Nombre</label><input id="name" required /></div>
-        <div class="field"><label>Tipo</label><select id="leadType"><option>Lead</option><option>Prospecto</option><option>Cliente</option></select></div>
-        <div class="field"><label>País</label><select id="country" required></select></div>
-        <div class="field"><label>Ubicación</label><input id="location" /></div>
-        <div class="field"><label>Tamaño empresa</label><select id="companySize"></select></div>
-        <div class="field"><label>Vía contacto</label><select id="contactChannel" required></select></div>
-        <div class="field"><label>Emails enviados</label><input id="emailsSent" type="number" min="0" value="1" /></div>
-        <div class="field"><label>Estado</label><select id="status"></select></div>
-        <div class="field"><label>Prioridad</label><select id="priority"><option>Baja</option><option selected>Media</option><option>Alta</option></select></div>
-        <div class="field"><label>Interés</label><select id="interestLevel"></select></div>
+        <div class="field"><label data-i18n="field_contact_date">Fecha contacto</label><input id="contactDate" type="date" required /></div>
+        <div class="field"><label data-i18n="field_last_activity">Última actividad</label><input id="lastActivity" type="date" /></div>
+        <div class="field"><label data-i18n="field_name">Nombre</label><input id="name" required /></div>
+        <div class="field"><label data-i18n="field_type">Tipo</label><select id="leadType"><option>Lead</option><option>Prospecto</option><option>Cliente</option></select></div>
+        <div class="field"><label data-i18n="field_country">País</label><select id="country" required></select></div>
+        <div class="field"><label data-i18n="field_location">Ubicación</label><input id="location" /></div>
+        <div class="field"><label data-i18n="field_company_size">Tamaño empresa</label><select id="companySize"></select></div>
+        <div class="field"><label data-i18n="field_channel">Vía contacto</label><select id="contactChannel" required></select></div>
+        <div class="field"><label data-i18n="field_emails_sent">Emails enviados</label><input id="emailsSent" type="number" min="0" value="1" /></div>
+        <div class="field"><label data-i18n="field_status">Estado</label><select id="status"></select></div>
+        <div class="field"><label data-i18n="field_priority">Prioridad</label><select id="priority"><option>Baja</option><option selected>Media</option><option>Alta</option></select></div>
+        <div class="field"><label data-i18n="field_interest">Interés</label><select id="interestLevel"></select></div>
 
-        <div class="field"><label>Respuesta</label><select id="response"><option value="false">No</option><option value="true">Sí</option></select></div>
-        <div class="field"><label>Fecha respuesta</label><input id="responseDate" type="date" /></div>
-        <div class="field"><label>Fecha relanzamiento</label><input id="followupDate" type="date" /></div>
+        <div class="field"><label data-i18n="field_response">Respuesta</label><select id="response"><option value="false">No</option><option value="true">Sí</option></select></div>
+        <div class="field"><label data-i18n="field_response_date">Fecha respuesta</label><input id="responseDate" type="date" /></div>
+        <div class="field"><label data-i18n="field_relaunch_date">Fecha relanzamiento</label><input id="followupDate" type="date" /></div>
 
-        <div class="field"><label>Relanzamiento hecho</label><select id="followupDone"><option value="false">No</option><option value="true">Sí</option></select></div>
-        <div class="field"><label>Reunión</label><select id="meetingDone"><option value="false">No</option><option value="true">Sí</option></select></div>
-        <div class="field"><label>Fecha reunión</label><input id="meetingDate" type="date" /></div>
+        <div class="field"><label data-i18n="field_relaunch_done">Relanzamiento hecho</label><select id="followupDone"><option value="false">No</option><option value="true">Sí</option></select></div>
+        <div class="field"><label data-i18n="field_meeting">Reunión</label><select id="meetingDone"><option value="false">No</option><option value="true">Sí</option></select></div>
+        <div class="field"><label data-i18n="field_meeting_date">Fecha reunión</label><input id="meetingDate" type="date" /></div>
 
-        <div class="field"><label>Estado reunión</label><select id="meetingStatus"></select></div>
-        <div class="field"><label>Propuesta enviada</label><select id="proposalSent"><option value="false">No</option><option value="true">Sí</option></select></div>
-        <div class="field"><label>Fecha propuesta</label><input id="proposalDate" type="date" /></div>
+        <div class="field"><label data-i18n="field_meeting_status">Estado reunión</label><select id="meetingStatus"></select></div>
+        <div class="field"><label data-i18n="field_proposal_sent">Propuesta enviada</label><select id="proposalSent"><option value="false">No</option><option value="true">Sí</option></select></div>
+        <div class="field"><label data-i18n="field_proposal_date">Fecha propuesta</label><input id="proposalDate" type="date" /></div>
 
-        <div class="field"><label>Monto propuesta</label><input id="proposalAmount" type="number" min="0" value="1000" /></div>
-        <div class="field"><label>Estado propuesta</label><select id="proposalStatus"></select></div>
-        <div class="field"><label>Valor potencial</label><input id="estimatedValue" type="number" min="0" value="1000" /></div>
+        <div class="field"><label data-i18n="field_proposal_amount">Monto propuesta</label><input id="proposalAmount" type="number" min="0" value="1000" /></div>
+        <div class="field"><label data-i18n="field_proposal_status">Estado propuesta</label><select id="proposalStatus"></select></div>
+        <div class="field"><label data-i18n="field_estimated_value">Valor potencial</label><input id="estimatedValue" type="number" min="0" value="1000" /></div>
 
-        <div class="field"><label>Valor cerrado</label><input id="closedValue" type="number" min="0" value="0" /></div>
-        <div class="field"><label>Fecha ganado</label><input id="wonDate" type="date" /></div>
-        <div class="field"><label>Fecha perdido</label><input id="lostDate" type="date" /></div>
+        <div class="field"><label data-i18n="field_closed_value">Valor cerrado</label><input id="closedValue" type="number" min="0" value="0" /></div>
+        <div class="field"><label data-i18n="field_won_date">Fecha ganado</label><input id="wonDate" type="date" /></div>
+        <div class="field"><label data-i18n="field_lost_date">Fecha perdido</label><input id="lostDate" type="date" /></div>
 
-        <div class="field"><label>Motivo rechazo</label><select id="rejectionReason"></select></div>
-        <div class="field"><label>Archivado</label><select id="archived"><option value="false">No</option><option value="true">Sí</option></select></div>
+        <div class="field"><label data-i18n="field_rejection_reason">Motivo rechazo</label><select id="rejectionReason"></select></div>
+        <div class="field"><label data-i18n="field_archived">Archivado</label><select id="archived"><option value="false">No</option><option value="true">Sí</option></select></div>
         <div class="field"><label>Lead Score</label><input id="leadScore" type="number" min="0" max="100" value="0" /></div>
 
-        <div class="field wide"><label>Próxima acción</label><input id="nextAction" /></div>
-        <div class="field wide"><label>Notas</label><textarea id="notes" rows="4"></textarea></div>
-        <div class="field wide"><label>Historial</label><textarea id="historyText" rows="4"></textarea></div>
+        <div class="field wide"><label data-i18n="field_next_action">Próxima acción</label><input id="nextAction" /></div>
+        <div class="field wide"><label data-i18n="field_notes">Notas</label><textarea id="notes" rows="4"></textarea></div>
+        <div class="field wide"><label data-i18n="field_history">Historial</label><textarea id="historyText" rows="4"></textarea></div>
       </div>
 
       <div class="modal-actions">
-        <button type="button" id="deleteLeadBtn" class="btn danger hidden">Eliminar</button>
-        <button type="button" id="archiveLeadBtn" class="btn secondary">Archivar/Desarchivar</button>
-        <button type="button" id="convertClientBtn" class="btn gold-btn hidden">Convertir a cliente</button>
+        <button type="button" id="deleteLeadBtn" class="btn danger hidden" data-i18n="btn_delete">Eliminar</button>
+        <button type="button" id="archiveLeadBtn" class="btn secondary" data-i18n="btn_archive_toggle">Archivar/Desarchivar</button>
+        <button type="button" id="convertClientBtn" class="btn gold-btn hidden" data-i18n="btn_convert_client">Convertir a cliente</button>
         <div></div>
-        <button type="button" id="cancelLeadBtn" class="btn ghost">Cancelar</button>
-        <button type="submit" class="btn primary">Guardar</button>
+        <button type="button" id="cancelLeadBtn" class="btn ghost" data-i18n="btn_cancel">Cancelar</button>
+        <button type="submit" class="btn primary" data-i18n="btn_save">Guardar</button>
       </div>
     </form>
   </dialog>
@@ -263,38 +329,38 @@
       <input id="clientLeadId" type="hidden" />
 
       <div class="form-grid two">
-        <div class="field"><label>Nombre cliente</label><input id="clientName" required /></div>
-        <div class="field"><label>País</label><select id="clientCountry"></select></div>
-        <div class="field"><label>Servicios</label><input id="clientServices" placeholder="Meta Ads, Estrategia, Sitio web" /></div>
-        <div class="field"><label>Fee mensual €</label><input id="monthlyFee" type="number" min="0" value="0" /></div>
-        <div class="field"><label>Setup €</label><input id="setupFee" type="number" min="0" value="0" /></div>
-        <div class="field"><label>Valor total €</label><input id="totalValue" type="number" min="0" value="0" /></div>
-        <div class="field"><label>Inicio</label><input id="startDate" type="date" /></div>
-        <div class="field"><label>Fin</label><input id="endDate" type="date" /></div>
-        <div class="field"><label>Estado</label><select id="clientStatus"><option>Activo</option><option>Pausado</option><option>Finalizado</option></select></div>
-        <div class="field wide"><label>Notas</label><textarea id="clientNotes" rows="4"></textarea></div>
+        <div class="field"><label data-i18n="field_client_name">Nombre cliente</label><input id="clientName" required /></div>
+        <div class="field"><label data-i18n="field_country">País</label><select id="clientCountry"></select></div>
+        <div class="field"><label data-i18n="field_services">Servicios</label><input id="clientServices" placeholder="Meta Ads, Estrategia, Sitio web" /></div>
+        <div class="field"><label data-i18n="field_monthly_fee">Fee mensual €</label><input id="monthlyFee" type="number" min="0" value="0" /></div>
+        <div class="field"><label data-i18n="field_setup_fee">Setup €</label><input id="setupFee" type="number" min="0" value="0" /></div>
+        <div class="field"><label data-i18n="field_total_value">Valor total €</label><input id="totalValue" type="number" min="0" value="0" /></div>
+        <div class="field"><label data-i18n="field_start_date">Inicio</label><input id="startDate" type="date" /></div>
+        <div class="field"><label data-i18n="field_end_date">Fin</label><input id="endDate" type="date" /></div>
+        <div class="field"><label data-i18n="field_status">Estado</label><select id="clientStatus"><option>Activo</option><option>Pausado</option><option>Finalizado</option></select></div>
+        <div class="field wide"><label data-i18n="field_notes">Notas</label><textarea id="clientNotes" rows="4"></textarea></div>
       </div>
 
       <div class="modal-actions">
-        <button type="button" id="deleteClientBtn" class="btn danger hidden">Eliminar</button>
+        <button type="button" id="deleteClientBtn" class="btn danger hidden" data-i18n="btn_delete">Eliminar</button>
         <div></div>
-        <button type="button" id="cancelClientBtn" class="btn ghost">Cancelar</button>
-        <button type="submit" class="btn primary">Guardar cliente</button>
+        <button type="button" id="cancelClientBtn" class="btn ghost" data-i18n="btn_cancel">Cancelar</button>
+        <button type="submit" class="btn primary" data-i18n="btn_save_client">Guardar cliente</button>
       </div>
     </form>
   </dialog>
 
   <dialog id="importDialog" class="modal small">
     <div class="modal-head">
-      <h2>Importar CSV</h2>
+      <h2 data-i18n="import_title">Importar CSV</h2>
       <button type="button" class="icon-btn" id="closeImportBtn">×</button>
     </div>
-    <p>Importá un CSV exportado desde Excel. El sistema intentará reconocer las columnas principales.</p>
+    <p data-i18n="import_text">Importá un CSV exportado desde Excel. El sistema intentará reconocer las columnas principales.</p>
     <input id="csvFile" type="file" accept=".csv,text/csv" />
     <div class="modal-actions">
       <div></div>
-      <button type="button" id="cancelImportBtn" class="btn ghost">Cancelar</button>
-      <button type="button" id="importBtn" class="btn primary">Importar</button>
+      <button type="button" id="cancelImportBtn" class="btn ghost" data-i18n="btn_cancel">Cancelar</button>
+      <button type="button" id="importBtn" class="btn primary" data-i18n="btn_import">Importar CSV</button>
     </div>
   </dialog>
 
