@@ -2309,7 +2309,6 @@ function exportCSV() {
 }
 
 async function importCSV() {
- async function importCSV() {
   const file = $('csvFile').files[0];
 
   if (!file) {
