@@ -2309,6 +2309,7 @@ function exportCSV() {
 }
 
 async function importCSV() {
+ async function importCSV() {
   const file = $('csvFile').files[0];
 
   if (!file) {
@@ -2320,21 +2321,45 @@ async function importCSV() {
     header: true,
     skipEmptyLines: true,
     complete: async results => {
-      const rows = results.data.map(row => ({
-        contact_date: parseDate(row.contact_date || row.fecha_contacto || row.fecha) || today(),
-        last_activity: today(),
-        name: row.name || row.nombre || '',
-        country: row.country || row.pais || 'Francia',
-        location: row.location || row.ubicacion || '',
-        contact_channel: row.contact_channel || row.canal || 'Email',
-        emails_sent: Number(row.emails_sent || row.emails || 1),
-        status: row.status || row.estado || 'Nuevo',
-        priority: row.priority || 'Media',
-        response: normalizeBool(row.response || row.respuesta),
-        interest_level: row.interest_level || row.interes || 'Sin interés',
-        estimated_value: Number(row.estimated_value || row.valor || 1000),
-        notes: row.notes || row.notas || ''
-      })).filter(row => row.name);
+      const rows = results.data.map(row => {
+        const channelRaw =
+          row.contact_channel ||
+          row.canal ||
+          row['Vía de contacto'] ||
+          'Email';
+
+        const channel =
+          channelRaw === 'Formulario'
+            ? 'Formulario web'
+            : channelRaw;
+
+        return {
+          contact_date: parseDate(row.contact_date || row.fecha_contacto || row.fecha || row['Fecha de contacto']) || today(),
+          last_activity: today(),
+          name: row.name || row.nombre || row.Nombre || '',
+          country: row.country || row.pais || row.País || 'Francia',
+          location: row.location || row.ubicacion || row.Ubicación || '',
+          contact_channel: channel,
+          emails_sent: Number(row.emails_sent || row.emails || 1),
+          status: row.status || row.estado || row.Estado || 'Nuevo',
+          priority: row.priority || row.prioridad || row.Prioridad || 'Media',
+          response: normalizeBool(row.response || row.respuesta || row['¿Hubo respuesta?']),
+          followup_done: normalizeBool(row.followup_done || row['¿Hubo relanzamiento?']),
+          followup_date: parseDate(row.followup_date || row['Fecha de relanzamiento']) || null,
+          meeting_done: normalizeBool(row.meeting_done || row['¿Llegó a reunión?']),
+          meeting_status: row.meeting_status || row['Estado de reunión'] || 'Sin reunión',
+          next_action: row.next_action || row['Próxima acción'] || '',
+          interest_level: row.interest_level || row.interes || row.Interés || 'Sin interés',
+          estimated_value: Number(row.estimated_value || row.valor || row['Valor potencial'] || 1000),
+          notes: row.notes || row.notas || row.Notas || '',
+          history: row.history || row.historial || row['Historial de contacto'] || ''
+        };
+      }).filter(row => row.name);
+
+      if (!rows.length) {
+        toast('0 leads importados: no se reconoció la columna Nombre');
+        return;
+      }
 
       const { error } = await supabaseClient.from('leads').insert(rows);
 
