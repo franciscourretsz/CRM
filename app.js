@@ -1666,34 +1666,36 @@ function setupKanbanDragAndDrop() {
   });
 }
 
-async function updateLeadStatusFromKanban(id, status) {
+async function updateLeadStatusFromKanban(id, stage) {
   const payload = {
-    status,
+    pipeline_stage: stage,
     last_activity: today()
   };
 
-  if (status === 'Respondió') {
+  if (stage === 'Respondió') {
     payload.response = true;
     payload.response_date = today();
   }
 
-  if (status === 'Reunión agendada') {
+  if (stage === 'Reunión agendada') {
     payload.meeting_status = 'Agendada';
     payload.meeting_date = today();
   }
 
-  if (status === 'Propuesta enviada') {
+  if (stage === 'Propuesta enviada') {
     payload.proposal_sent = true;
     payload.proposal_status = 'Pendiente';
     payload.proposal_date = today();
   }
 
-  if (status === 'Ganado') {
+  if (stage === 'Ganado') {
+    payload.status = 'Ganado';
     payload.won_date = today();
     payload.archived = false;
   }
 
-  if (status === 'Perdido') {
+  if (stage === 'Perdido') {
+    payload.status = 'Perdido';
     payload.lost_date = today();
     payload.archived = true;
   }
@@ -1708,10 +1710,16 @@ async function updateLeadStatusFromKanban(id, status) {
     return;
   }
 
-  toast('Lead actualizado');
+  toast(
+    currentLanguage === 'fr'
+      ? 'Pipeline mis à jour'
+      : currentLanguage === 'en'
+        ? 'Pipeline updated'
+        : 'Pipeline actualizado'
+  );
+
   await loadAll();
 }
-
 function renderClients() {
   const source = clients.filter(client => client.status !== 'Finalizado');
 
