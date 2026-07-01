@@ -895,15 +895,12 @@ function shouldAutoArchive(lead) {
   if (lead.archived) return false;
   if (lead.response) return false;
   if (lead.status === 'Ganado') return false;
+  if (lead.status === 'Perdido') return true;
 
-  const mostRecent = [lead.last_activity, lead.followup_date, lead.contact_date]
-    .filter(Boolean)
-    .sort()
-    .pop();
+  const baseDate = lead.contact_date || lead.created_at?.slice(0, 10);
 
-  return mostRecent && daysBetween(mostRecent) >= 10;
+  return baseDate && daysBetween(baseDate) >= 10;
 }
-
 function getDateValueForFilter(lead, field) {
   if (field === 'all') {
     return [
@@ -1935,7 +1932,24 @@ window.editLead = function(id) {
 
   $('leadDialog').showModal();
 };
+function getAutomaticStatus(payload, manualStatus) {
+  if (manualStatus === 'Ganado') return 'Ganado';
+  if (manualStatus === 'Perdido') return 'Perdido';
 
+  if (payload.proposal_sent) return 'Propuesta enviada';
+
+  if (payload.meeting_done) return 'Reunión hecha';
+
+  if (payload.meeting_status === 'Agendada') return 'Reunión agendada';
+
+  if (payload.response && payload.interest_level !== 'Sin interés') {
+    return 'Interesado';
+  }
+
+  if (payload.response) return 'Respondió';
+
+  return manualStatus || 'Nuevo';
+}
 function getLeadFormData() {
   const response = $('response').value === 'true';
   const meetingDone = $('meetingDone').value === 'true';
@@ -2005,7 +2019,7 @@ function getLeadFormData() {
     notes: $('notes').value.trim(),
     history: $('historyText').value.trim()
   };
-
+payload.status = getAutomaticStatus(payload, status);
   payload.lead_score = getLeadScore(payload);
 
   if (status === 'Ganado') {
