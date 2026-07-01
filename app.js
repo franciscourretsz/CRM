@@ -1588,32 +1588,36 @@ function translateStatus(status) {
 
   return map[currentLanguage]?.[status] || status;
 }
+function getPipelineStage(lead) {
+  return lead.pipeline_stage || 'Nuevo';
+}
+
 function renderKanban() {
   if (!$('kanbanBoard')) return;
 
   const source = filteredLeads.filter(lead => !lead.archived);
   $('kanbanCount').textContent = `${source.length} leads`;
 
-  $('kanbanBoard').innerHTML = KANBAN_COLUMNS.map(status => {
-    const items = source.filter(lead => lead.status === status);
+  $('kanbanBoard').innerHTML = KANBAN_COLUMNS.map(stage => {
+    const items = source.filter(lead => getPipelineStage(lead) === stage);
+    const value = items.reduce((sum, lead) => sum + Number(lead.estimated_value || 0), 0);
 
     return `
-      <div class="kanban-column" data-status="${escapeHtml(status)}">
+      <div class="kanban-column" data-status="${escapeHtml(stage)}">
         <div class="kanban-column-head">
-          <h3>${translateStatus(status)}</h3>
-          <span>${items.length}</span>
+          <div>
+            <h3>${translateStatus(stage)}</h3>
+            <span>${items.length} leads · ${money(value)}</span>
+          </div>
         </div>
 
         ${items.map(lead => `
-          <div
-            class="kanban-card"
-            draggable="true"
-            data-id="${lead.id}"
-          >
+          <div class="kanban-card" draggable="true" data-id="${lead.id}">
             <h4>${escapeHtml(lead.name)}</h4>
-            <p>${escapeHtml(lead.country || '')} · ${escapeHtml(lead.location || '')}</p>
+            <p>${translateCountry(lead.country || '')} · ${escapeHtml(lead.location || '')}</p>
 
             <div class="badges">
+              ${temperatureBadge(lead)}
               ${responseBadge(lead)}
               ${interestBadge(lead)}
               ${badge(money(lead.estimated_value), 'gold')}
@@ -1621,7 +1625,9 @@ function renderKanban() {
 
             <div class="kanban-card-footer">
               <span>${Number(lead.emails_sent || 0)} emails</span>
-              <button class="btn ghost" onclick="editLead('${lead.id}')">Editar</button>
+              <button class="btn ghost" onclick="editLead('${lead.id}')">
+                ${currentLanguage === 'fr' ? 'Modifier' : currentLanguage === 'en' ? 'Edit' : 'Editar'}
+              </button>
             </div>
           </div>
         `).join('')}
@@ -1631,7 +1637,6 @@ function renderKanban() {
 
   setupKanbanDragAndDrop();
 }
-
 function setupKanbanDragAndDrop() {
   document.querySelectorAll('.kanban-card').forEach(card => {
     card.addEventListener('dragstart', event => {
