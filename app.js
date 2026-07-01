@@ -1588,10 +1588,29 @@ function translateStatus(status) {
 
   return map[currentLanguage]?.[status] || status;
 }
-function getPipelineStage(lead) {
-  return lead.pipeline_stage || 'Nuevo';
-}
+function getPipelineStage(lead){
 
+    if(lead.pipeline_stage)
+        return lead.pipeline_stage;
+
+    if(lead.status==="Ganado")
+        return "Ganado";
+
+    if(lead.status==="Perdido")
+        return "Perdido";
+
+    if(lead.proposal_sent)
+        return "Propuesta enviada";
+
+    if(lead.meeting_done)
+        return "Reunión agendada";
+
+    if(lead.response)
+        return "Respondió";
+
+    return "Nuevo";
+
+}
 function renderKanban() {
   if (!$('kanbanBoard')) return;
 
@@ -1945,6 +1964,31 @@ window.editLead = function(id) {
 
   $('leadDialog').showModal();
 };
+function getAutomaticPipelineStage({
+  response,
+  meetingDone,
+  proposalSent,
+  status
+}){
+
+  if(status === 'Ganado')
+      return 'Ganado';
+
+  if(status === 'Perdido')
+      return 'Perdido';
+
+  if(proposalSent)
+      return 'Propuesta enviada';
+
+  if(meetingDone)
+      return 'Reunión agendada';
+
+  if(response)
+      return 'Respondió';
+
+  return 'Nuevo';
+
+}
 function getAutomaticStatus(payload, manualStatus) {
   if (manualStatus === 'Ganado') return 'Ganado';
   if (manualStatus === 'Perdido') return 'Perdido';
