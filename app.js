@@ -2001,6 +2001,14 @@ function getLeadFormData() {
     emails_sent: Number($('emailsSent').value || 0),
 
     status,
+
+    pipeline_stage: getAutomaticPipelineStage({
+  response,
+  meetingDone,
+  proposalSent,
+  status
+}),
+    
     priority: $('priority').value,
     interest_level: $('interestLevel').value,
     lead_score: Number($('leadScore').value || 0),
